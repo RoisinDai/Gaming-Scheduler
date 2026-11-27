@@ -22,15 +22,18 @@ export async function LoginOptions() {
       <p className="eyebrow">Sign in</p>
       <h2 className="heading mt-2 text-3xl">Ready up</h2>
 
+      <form action="/auth/sign-in" method="post">
       <button
+        type="submit"
         disabled={mock}
         className="btn mt-6 w-full bg-[#5865F2] py-3 text-bone chamfer-sm hover:bg-[#4752c4]"
         title={mock ? "Discord login is configured at deployment" : undefined}
       >
         <DiscordIcon /> Continue with Discord
       </button>
+      </form>
       {mock && (
-        <p className="mt-2 text-xs text-haze">Discord login is switched on when the app is deployed with Supabase.</p>
+        <p className="mt-2 text-xs text-haze">Discord login is switched on when Supabase mode is enabled.</p>
       )}
 
       {mock && <MockUsers currentId={current?.id ?? null} />}
