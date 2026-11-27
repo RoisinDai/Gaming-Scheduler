@@ -85,7 +85,8 @@ export function MyCalendar() {
     },
   });
 
-  const othersOn = (date: ISODate) => availableOn(date, data.players, data.availability).filter((id) => id !== me.id).length;
+  const squadmatesOn = (date: ISODate) =>
+    availableOn(date, data.players, data.availability).filter((id) => id !== me.id).length + (isOn(date) ? 1 : 0);
   const days = weekDates(weekStart);
   const clearable = days.filter((date) => mine.has(date) && isEditableDate(date, today));
   const markedThisWeek = days.filter((date) => mine.has(date)).length;
@@ -150,7 +151,7 @@ export function MyCalendar() {
             {days.map((date, i) => {
               const on = isOn(date);
               const locked = !isEditableDate(date, today);
-              const others = othersOn(date);
+              const squadmates = squadmatesOn(date);
               return (
                 <button
                   key={date}
@@ -188,7 +189,7 @@ export function MyCalendar() {
                       {locked ? (on ? "Was available" : "Locked") : on ? "Available" : "Tap to add"}
                     </span>
                     <span className="flex items-center gap-1.5 text-xs text-haze">
-                      <Users className="h-3.5 w-3.5" /> {others} squadmate{others === 1 ? "" : "s"} in
+                      <Users className="h-3.5 w-3.5" /> {squadmates} squadmate{squadmates === 1 ? "" : "s"} in
                     </span>
                   </div>
                 </button>
