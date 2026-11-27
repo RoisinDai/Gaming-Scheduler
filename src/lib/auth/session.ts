@@ -5,20 +5,25 @@ import { getRepository } from "@/lib/data";
 import { todayInTimeZone } from "@/lib/domain/dates";
 import type { Player, SquadState } from "@/lib/domain/types";
 import { isMockMode } from "@/lib/env";
+import { createSupabaseClient } from "./supabase";
 
 export const MOCK_SESSION_COOKIE = "qu_mock_user";
 
 async function sessionUserId(): Promise<string | null> {
-  const store = await cookies();
-  if (isMockMode()) return store.get(MOCK_SESSION_COOKIE)?.value ?? null;
-  return null;
+  if (isMockMode()) return (await cookies()).get(MOCK_SESSION_COOKIE)?.value ?? null;
+  const db = await createSupabaseClient();
+  const { data: { user }, error } = await db.auth.getUser();
+  if (error || !user) return null;
+  const result = await db.rpc("current_discord_id");
+  if (result.error) throw new Error(result.error.message);
+  return typeof result.data === "string" ? result.data : null;
 }
 
 export async function getCurrentPlayer(): Promise<Player | null> {
   const userId = await sessionUserId();
   if (!userId) return null;
   const { data } = await getRepository().getSquad();
-  return data.players.find((player) => player.id === userId) ?? null;
+  return data.players.find(player => player.id === userId) ?? null;
 }
 
 export async function requirePlayer(): Promise<Player> {
@@ -35,11 +40,14 @@ export async function loadSquadState(): Promise<SquadState> {
 
 export async function setMockSession(userId: string): Promise<void> {
   if (!isMockMode()) throw new Error("Mock login is only available in local development.");
-  const store = await cookies();
-  store.set(MOCK_SESSION_COOKIE, userId, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
+  (await cookies()).set(MOCK_SESSION_COOKIE, userId, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 30 });
 }
 
 export async function clearSession(): Promise<void> {
-  const store = await cookies();
-  store.delete(MOCK_SESSION_COOKIE);
+  if (!isMockMode()) {
+    const db = await createSupabaseClient();
+    const { error } = await db.auth.signOut({ scope: "local" });
+    if (error) throw new Error(error.message);
+  }
+  (await cookies()).delete(MOCK_SESSION_COOKIE);
 }
