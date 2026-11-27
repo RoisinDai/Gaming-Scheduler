@@ -18,15 +18,30 @@
   --color-warn-deep: #a8700f;
 
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-heading), "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-display:
+    var(--font-heading), "Arial Narrow", ui-sans-serif, sans-serif;
 }
 
 @utility chamfer {
-  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  clip-path: polygon(
+    0 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
 }
 
 @utility chamfer-sm {
-  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+  clip-path: polygon(
+    0 0,
+    calc(100% - 7px) 0,
+    100% 7px,
+    100% 100%,
+    7px 100%,
+    0 calc(100% - 7px)
+  );
 }
 
 @utility btn {
@@ -62,12 +77,12 @@
 
 @layer components {
   .panel {
-    @apply relative border border-bone/[0.08] bg-ink-850/90;
+    @apply relative border border-bone/8 bg-ink-850/90;
   }
 
   .panel-tick::before {
     content: "";
-    @apply absolute -top-px -left-px h-[2px] w-6 bg-val;
+    @apply absolute -top-px -left-px h-0.5 w-6 bg-val;
   }
 
   .eyebrow {
