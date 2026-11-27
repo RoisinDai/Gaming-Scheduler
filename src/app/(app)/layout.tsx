@@ -1,4 +1,5 @@
 import { Suspense, type ReactNode } from "react";
+import { connection } from "next/server";
 import { LogoMark } from "@/components/brand/logo";
 import { SquadProvider } from "@/components/providers/squad-provider";
 import { AppShell } from "@/components/shell/app-shell";
@@ -15,6 +16,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 }
 
 async function AuthenticatedApp({ children }: { children: ReactNode }) {
+  await connection();
   const state = await loadSquadState();
   const isMock = isMockMode();
   const scenario = isMock ? await getMockScenario() : null;
