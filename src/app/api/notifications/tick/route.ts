@@ -4,8 +4,6 @@ import { NextResponse } from "next/server";
 import type { SquadData } from "@/lib/domain/types";
 import { buildDiscordMessage, lineupForToday, planNotification, type NotificationState } from "@/lib/notifications/lineup";
 
-export const runtime = "nodejs";
-
 type Claim = {
   date: string;
   now: string;
