@@ -72,13 +72,11 @@ export function buildDiscordMessage(
   // Only call someone rotated out if they are still available; unavailability has its own section.
   const rotatedIn = previous ? current.lineup.filter(id => previous.sitOuts.includes(id)) : [];
   const rotatedOut = previous ? current.sitOuts.filter(id => previous.lineup.includes(id)) : [];
-  const affected = previous
+  const affected = previous && previous.kind !== "short"
     ? sorted([...added, ...removed, ...rotatedIn, ...rotatedOut,
-        ...difference(current.lineup, previous.lineup),
-        ...difference(previous.lineup, current.lineup),
-        ...difference(current.sitOuts, previous.sitOuts),
-        ...difference(previous.sitOuts, current.sitOuts)])
-    : current.available;
+        ...difference(current.sitOuts, previous.sitOuts).filter(id => previous.available.includes(id)),
+        ...difference(previous.sitOuts, current.sitOuts).filter(id => current.available.includes(id))])
+    : current.kind === "short" ? sorted([...added, ...removed]) : current.available;
   // Explicit allowlist prevents @everyone, @here and role pings.
   const mentionIds = affected.filter(id => /^\d{17,20}$/.test(id));
   const clean = (name: string) => name.replace(/[\\`*_~|<>@#\r\n]/g, " ").trim().slice(0, 80) || "Player";
