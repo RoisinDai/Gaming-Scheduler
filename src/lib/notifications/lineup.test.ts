@@ -3,7 +3,7 @@ import { buildDiscordMessage, lineupForToday, planNotification, type Lineup, typ
 import type { SquadData } from "@/lib/domain/types";
 
 const date = "2026-11-27";
-const ids = Array.from({ length: 7 }, (_, i) => String(100000000000000000n + BigInt(i)));
+const ids = Array.from({ length: 7 }, (_, i) => `10000000000000000${i}`);
 function squad(count: number): SquadData {
   return {
     players: ids.map((id, i) => ({ id, displayName: "Player " + i, avatarUrl: "", timezone: "America/New_York", availabilityUpdatedAt: null })),
